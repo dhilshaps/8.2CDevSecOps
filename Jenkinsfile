@@ -1,9 +1,10 @@
 pipeline {
     agent any
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/dhilshaps/8.2CDevSecOps.git'
+                git 'https://github.com/dhilshaps/8.2CDevSecOps.git'
             }
         }
         stage('Install Dependencies') {
@@ -16,11 +17,6 @@ pipeline {
                 sh 'npm test || true'
             }
         }
-        stage('Generate Coverage Report') {
-            steps {
-                sh 'npm run coverage || true'
-            }
-        }
         stage('NPM Audit (Security Scan)') {
             steps {
                 sh 'npm audit || true'
@@ -30,13 +26,12 @@ pipeline {
 
     post {
         always {
-            emailext(
-                to: 'your_email@example.com',
-                subject: "Jenkins Build #${BUILD_NUMBER}: ${currentBuild.currentResult}",
-                body: """<p>Hello,</p>
-                         <p>The Jenkins pipeline has finished running.</p>
-                         <p><b>Status:</b> ${currentBuild.currentResult}</p>
-                         <p>Check Jenkins console for details.</p>""",
+            emailext (
+                to: 'dhilshapspromos@gmail.com',
+                subject: "Build #${BUILD_NUMBER} - ${BUILD_STATUS}",
+                body: """The build for ${JOB_NAME} has finished with status: ${BUILD_STATUS}.
+
+Check the console log at ${BUILD_URL} for details.""",
                 attachLog: true
             )
         }
