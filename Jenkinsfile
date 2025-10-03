@@ -1,10 +1,11 @@
+
 pipeline {
     agent any
 
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/dhilshaps/8.2CDevSecOps.git'
+                git branch: 'main', url: 'https://github.com/dhilshaps/8.2CDevSecOps.git'
             }
         }
         stage('Install Dependencies') {
@@ -28,10 +29,10 @@ pipeline {
         always {
             emailext (
                 to: 'dhilshapspromos@gmail.com',
-                subject: "Build #${BUILD_NUMBER} - ${BUILD_STATUS}",
-                body: """The build for ${JOB_NAME} has finished with status: ${BUILD_STATUS}.
+                subject: "Build #${env.BUILD_NUMBER} - ${currentBuild.currentResult}",
+                body: """The build for ${env.JOB_NAME} has finished with status: ${currentBuild.currentResult}.
 
-Check the console log at ${BUILD_URL} for details.""",
+Check the console log at ${env.BUILD_URL} for details.""",
                 attachLog: true
             )
         }
