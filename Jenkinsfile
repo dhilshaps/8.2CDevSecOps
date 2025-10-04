@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        SONAR_TOKEN = credentials('SONAR_TOKEN')   // Add SonarCloud token in Jenkins credentials with ID: SONAR_TOKEN
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -20,6 +24,23 @@ pipeline {
         stage('NPM Audit (Security Scan)') {
             steps {
                 sh 'npm audit || true'
+            }
+        }
+        stage('SonarCloud Analysis') {
+            steps {
+                sh '''
+                    # Download SonarScanner CLI
+                    curl -sSLo sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+                    unzip -q sonar-scanner.zip -d .
+                    export PATH=$PATH:$(pwd)/sonar-scanner-5.0.1.3006-linux/bin
+
+                    # Run SonarScanner with your project details
+                    sonar-scanner \
+                      -Dsonar.projectKey=dhilshaps_8.2CDevSecOps \
+                      -Dsonar.organization=dhilshaps \
+                      -Dsonar.host.url=https://sonarcloud.io \
+                      -Dsonar.login=$SONAR_TOKEN
+                '''
             }
         }
     }
