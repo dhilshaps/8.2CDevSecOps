@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -28,7 +27,7 @@ pipeline {
     post {
         always {
             emailext (
-                to: 'dhilshapspromos@gmail.com',
+                to: 'dhilshaps7@gmail.com',
                 subject: "Build #${env.BUILD_NUMBER} - ${currentBuild.currentResult}",
                 body: """The build for ${env.JOB_NAME} has finished with status: ${currentBuild.currentResult}.
 
